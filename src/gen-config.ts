@@ -14,15 +14,17 @@ async function main() {
             port: 503,
             inputOffset: 0,
             inputSize: 16,
+            outputOffset: 0,
+            outputSize: 16,
             slaveId: 1
         },
-        pollingRate: 50,
         actionsPerRun: 150,
         numberOfRuns: 100,
         actionDelay: {
             minimum: 50,
             maximum: 150,
         },
+        openPlcApiPath: "http://localhost:8080/api/",
         outputFilePath: "run.tsv"
     });
 

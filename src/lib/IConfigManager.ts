@@ -8,16 +8,17 @@ export interface Config {
         port: number;
         inputOffset: number;
         inputSize: number;
+        outputOffset: number;
+        outputSize: number;
         slaveId: number;
     },
-    //Polling rate is the amount of polls per second
-    pollingRate: number;
     actionsPerRun: number;
     numberOfRuns: number;
     actionDelay: { // in milliseconds
         minimum: number;
         maximum: number;
     },
+    openPlcApiPath: string;
     outputFilePath: string;
 }
 
