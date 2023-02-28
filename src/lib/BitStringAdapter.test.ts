@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { ConstructArrayPattern, ConstructBitPattern, GetBitRange, SetBitRange } from "../Util";
+import { ConstructArrayPattern, ConstructBitPattern, GetBitRange, SetBitRange } from "./Util";
 import { BitStringAdapter } from "./BitStringAdapter";
 
 describe("bitstring test", () => {

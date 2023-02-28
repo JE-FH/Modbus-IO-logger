@@ -20,7 +20,7 @@ export class ModbusLoggerRunner {
         await this.WriteHeader();
         for (let runsDone = 0; runsDone < this._config.numberOfRuns; runsDone++) {
             let runActions = this._actionGenerator.GenerateRun(this._config.actionsPerRun);
-            await this.RunRun(runActions)
+            await this.RunRun(runsDone, runActions)
         }
     }
 
@@ -36,11 +36,14 @@ export class ModbusLoggerRunner {
         await this._outputLogger.WriteHeader(inputNames, outputNames)
     }
 
-    private async RunRun(actions: Array<IAction>): Promise<void> {
+    private async RunRun(runId: number, actions: Array<IAction>): Promise<void> {
+        console.error("Reseting PLC");
         await this._plcCommunicator.Reset();
+        console.error("PLC Ready");
         await this._outputLogger.BeginRun();
         for (let action of actions) {
-            await this.LogState();
+            console.error(action.Describe());
+            await this.LogState(runId);
             await action.Execute(this._plcCommunicator);
             let waitTime = randomInt(this._config.actionDelay.minimum, this._config.actionDelay.maximum);
             await new Promise<void>((resolve) => setInterval(() => resolve(), waitTime));
@@ -48,12 +51,12 @@ export class ModbusLoggerRunner {
         await this._outputLogger.EndRun();
     }
 
-    private async LogState() {
+    private async LogState(runId: number) {
         let start = new Date();
         let [input, output] = await Promise.all([
             this._plcCommunicator.GetInputCoils(this._config.ModbusDevice.inputOffset, this._config.ModbusDevice.inputSize),
             this._plcCommunicator.GetOutputCoils(this._config.ModbusDevice.outputOffset, this._config.ModbusDevice.outputSize)
         ]);
-        await this._outputLogger.LogState(start, input, output);
+        await this._outputLogger.LogState(runId, start, input, output);
     }
 }

@@ -1,17 +1,21 @@
 import { IAction } from "../IActionGenerator";
 import { IPLCCommunicator } from "../IPLCCommunicator";
 
-class ChangeInputAction implements IAction {
+export class ChangeInputAction implements IAction {
     readonly Name: string;
-    constructor() {
+    private readonly _offset: number;
+    private readonly _newInputValues: boolean[];
+    constructor(offset: number, inputValues: boolean[]) {
         this.Name = "ChangeInput";
+        this._offset = offset;
+        this._newInputValues = inputValues;
     }
 
     Describe(): string {
-        throw new Error("Ding dong");
+        return `Change inputs to (${this._newInputValues.join(", ")})`
     }
 
-    Execute(communicator: IPLCCommunicator): Promise<void> {
-        throw new Error("binggpt")
+    async Execute(communicator: IPLCCommunicator): Promise<void> {
+        await communicator.SetInputCoils(this._offset, this._newInputValues);
     }
 }

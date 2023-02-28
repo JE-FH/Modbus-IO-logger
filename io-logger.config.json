@@ -19,5 +19,5 @@
         "maximum": 150
     },
     "openPlcApiPath": "http://127.0.0.1:8080/api/",
-    "outputFilePath": "run.tsv"
+    "outputFilePath": "run.csv"
 }

@@ -4,16 +4,16 @@ import { FileConfigManager } from "./lib/FileConfigManager";
 import { ModbusLoggerRunner } from "./lib/ModbusLoggerRunner";
 import { ModbusPLCCommunicator } from "./lib/ModbusPLCCommunicator";
 import { RandomActionGenerator } from "./lib/RandomActionGenerator";
-import { TSVOutputLogger } from "./lib/TSVOutputLogger";
+import { CSVOutputLogger } from "./lib/CSVOutputLogger";
 
 async function main() {
     let configManager = new FileConfigManager();
     let config = await configManager.LoadConfig();
-    let outputLogger = await TSVOutputLogger.FromConfig(config);
+    let outputLogger = await CSVOutputLogger.FromConfig(config);
     let modbusLoggerRunner = new ModbusLoggerRunner(
         config, 
         outputLogger, 
-        new RandomActionGenerator(), 
+        new RandomActionGenerator(config), 
         new ModbusPLCCommunicator(config)
     );
 
