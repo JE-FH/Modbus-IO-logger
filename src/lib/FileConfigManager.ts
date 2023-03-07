@@ -1,4 +1,5 @@
 import { readFile, writeFile } from "fs/promises";
+import { BajerConfig } from "./BajerConfig";
 import { Config, IConfigManager } from "./IConfigManager";
 export class FileConfigManager implements IConfigManager {
     constructor() {
@@ -7,6 +8,17 @@ export class FileConfigManager implements IConfigManager {
     async LoadConfig(): Promise<Config> {
         try {
             let content = await readFile("io-logger.config.json", "utf-8");
+
+            return JSON.parse(content);
+        } catch (e) {
+            console.log("Could not load config correctly");
+            throw e;
+        }
+    }
+
+    async LoadBajerConfig(): Promise<BajerConfig> {
+        try {
+            let content = await readFile("bajer.config.json", "utf-8");
 
             return JSON.parse(content);
         } catch (e) {

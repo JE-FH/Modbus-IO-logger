@@ -1,3 +1,5 @@
+import { BajerConfig } from "./BajerConfig";
+
 export interface Config {
     ModbusMasterServer: {
         host: string;
@@ -24,5 +26,6 @@ export interface Config {
 
 export interface IConfigManager {
     LoadConfig(): Promise<Config>;
+    LoadBajerConfig(): Promise<BajerConfig>;
     WriteConfig(config: Config): Promise<void>;
 }
