@@ -17,6 +17,7 @@ export class BajerTCPServer extends EventEmitter implements IBajerServer {
     private _outputSize: number;
     private readonly _host: string;
     private readonly _port: number;
+    private _runningCommands: boolean;
 
     constructor(host: string, port: number) {
         super();
@@ -26,6 +27,7 @@ export class BajerTCPServer extends EventEmitter implements IBajerServer {
         this._outputSize = 0;
         this._host = host;
         this._port = port;
+        this._runningCommands = false;
     }
 
     Stop(): void {
@@ -67,14 +69,14 @@ export class BajerTCPServer extends EventEmitter implements IBajerServer {
             this._client = undefined;
         });
         socket.on("data", async (data) => {
-            let shouldRunFromAccumulator = this._dataAccumulator.length == 0;
             this._dataAccumulator = Buffer.concat([this._dataAccumulator, data]);
-            if (shouldRunFromAccumulator)
+            if (!this._runningCommands)
                 await this.RunFromAccumulator();
         });
     }
 
     private async RunFromAccumulator() {
+        this._runningCommands = true;
         while (this._dataAccumulator.length > 0) {
             let commandByte = this._dataAccumulator.readInt8(0);
             if (commandByte == 0) {
@@ -88,6 +90,7 @@ export class BajerTCPServer extends EventEmitter implements IBajerServer {
                     });
 
                     this._dataAccumulator = CopyOffset(this._dataAccumulator, bytesToRead + 1);
+
                     let beo = new BajerEventObject<Array<boolean>>(Promise.resolve([]));
                     this.emit("step", bytes, beo);
                     let data = await beo.wait();
@@ -137,6 +140,7 @@ export class BajerTCPServer extends EventEmitter implements IBajerServer {
                 this._dataAccumulator = CopyOffset(this._dataAccumulator, 1);
             }
         }
+        this._runningCommands = false;
     }
 
     private async WriteAndWait(buffer: Buffer): Promise<void> {

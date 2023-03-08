@@ -42,7 +42,7 @@ export class ModbusPLCCommunicator implements IPLCCommunicator {
 
     async Reset(): Promise<void> {
         await fetch(this._config.openPlcApiPath + "stop_plc");
-        console.error("Stopping tcp server");
+        console.error("Stopping modbus tcp server");
         await new Promise<void>((resolve, reject) => {
             if (this._netServer == undefined) {
                 resolve();
@@ -58,7 +58,7 @@ export class ModbusPLCCommunicator implements IPLCCommunicator {
                 resolve();
             });
         });
-        console.error("tcp server stopped");
+        console.error("modbus tcp server stopped");
         
         if (this._modbusServer != undefined) {
             this._modbusServer = undefined;
